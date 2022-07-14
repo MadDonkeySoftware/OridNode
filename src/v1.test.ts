@@ -1,10 +1,7 @@
-/* eslint-disable no-unused-expressions */
-const chai = require('chai');
-const _ = require('lodash');
+import { map } from 'lodash';
+import * as v1 from './v1';
 
-const v1 = require('./v1');
-
-describe('v1', () => {
+describe(__filename, () => {
   describe('generate', () => {
     describe('Returns properly formatted orid', () => {
       it('when requesting colon separated orid; including custom, omitting useSlashSeparator', () => {
@@ -23,7 +20,7 @@ describe('v1', () => {
         const orid = v1.generate(input);
 
         // Assert
-        chai.expect(orid).to.equal('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id:resource-rider');
+        expect(orid).toBe('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id:resource-rider');
       });
 
       it('when requesting colon separated orid; including custom, useSlashSeparator false', () => {
@@ -43,7 +40,7 @@ describe('v1', () => {
         const orid = v1.generate(input);
 
         // Assert
-        chai.expect(orid).to.equal('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id:resource-rider');
+        expect(orid).toBe('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id:resource-rider');
       });
 
       it('when requesting slash separated orid; including custom, useSlashSeparator true', () => {
@@ -63,7 +60,7 @@ describe('v1', () => {
         const orid = v1.generate(input);
 
         // Assert
-        chai.expect(orid).to.equal('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id/resource-rider');
+        expect(orid).toBe('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id/resource-rider');
       });
 
       it('when requesting orid; not including custom, omitting useSlashSeparator, no resource type', () => {
@@ -78,24 +75,24 @@ describe('v1', () => {
         const orid = v1.generate(input);
 
         // Assert
-        chai.expect(orid).to.equal('orid:1:test-provider::::test-service:resource-id');
+        expect(orid).toBe('orid:1:test-provider::::test-service:resource-id');
       });
     });
   });
 
   describe('isValid', () => {
     it('returns true on valid short orid', () => {
-      _.map([
+      map([
         'orid:1:a::::svc:id',
         'orid:1:a:1:::svc:id',
         'orid:1:a:1:2::svc:id',
         'orid:1:a:1:2:3:svc:id',
       ],
-      (orid) => chai.expect(v1.isValid(orid)).to.equal(true, `Failed on ${orid}`));
+      (orid: string) => expect(v1.isValid(orid)).toBe(true));
     });
 
     it('returns true on valid long orid', () => {
-      _.map([
+      map([
         'orid:1:a::::svc:id/rider',
         'orid:1:a::::svc:id:rider',
         'orid:1:a:1:::svc:id/rider',
@@ -105,7 +102,7 @@ describe('v1', () => {
         'orid:1:a:1:2:3:svc:id/rider',
         'orid:1:a:1:2:3:svc:id:rider',
       ],
-      (orid) => chai.expect(v1.isValid(orid)).to.equal(true, `Failed on ${orid}`));
+      (orid: string) => expect(v1.isValid(orid)).toBe(true));
     });
   });
 
@@ -127,7 +124,7 @@ describe('v1', () => {
         const output = v1.parse('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id:resource-rider');
 
         // Assert
-        chai.expect(output).to.deep.equal(expected);
+        expect(output).toEqual(expected);
       });
 
       it('when parsing slash separated orid; including custom fields', () => {
@@ -146,7 +143,7 @@ describe('v1', () => {
         const output = v1.parse('orid:1:test-provider:custom-1:custom-2:custom-3:test-service:resource-id/resource-rider');
 
         // Assert
-        chai.expect(output).to.deep.equal(expected);
+        expect(output).toEqual(expected);
       });
 
       it('when requesting orid; not including custom, omitting useSlashSeparator, no resource type', () => {
@@ -158,28 +155,28 @@ describe('v1', () => {
           custom3: '',
           service: 'test-service',
           resourceId: 'resource-id',
-          resourceRider: undefined,
+          resourceRider: undefined as string,
         };
 
         // Act
         const output = v1.parse('orid:1:test-provider::::test-service:resource-id');
 
         // Assert
-        chai.expect(output).to.deep.equal(expected);
+        expect(output).toEqual(expected);
       });
     });
 
     describe('throws error', () => {
       it('when non-string is provided', () => {
-        chai.expect(v1.parse.bind(null, 1)).to.throw('orid must be of type string');
+        expect(v1.parse.bind(null, 1)).toThrow('orid must be of type string');
       });
 
       it('when non-orid string is provided', () => {
-        chai.expect(v1.parse.bind(null, 'abc')).to.throw('Provided string does not appear to be a orid');
+        expect(v1.parse.bind(null, 'abc')).toThrow('Provided string does not appear to be a orid');
       });
 
       it('when malformed orid string is provided', () => {
-        chai.expect(v1.parse.bind(null, 'orid:1:abc')).to.throw('ORID appears to be invalid format');
+        expect(v1.parse.bind(null, 'orid:1:abc')).toThrow('ORID appears to be invalid format');
       });
     });
   });

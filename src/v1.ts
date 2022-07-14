@@ -1,20 +1,54 @@
 /* eslint-disable prefer-destructuring */
-const stringTemplate = require('string-template');
+import { default as stringTemplate } from 'string-template';
+
+export interface V1Orid {
+  /**
+   * The provider for this ORID.
+   */
+  provider: string,
+
+  /**
+   * Optional provider specific field 1.
+   */
+  custom1?: string,
+
+  /**
+   * Optional provider specific field 2.
+   */
+  custom2?: string,
+
+  /**
+   * Optional provider specific field 3.
+   */
+  custom3?: string,
+
+  /**
+   * The service that the resource belongs to.
+   */
+  service: string,
+
+  /**
+   * The resource identified by this ORID.
+   */
+  resourceId: string,
+
+  /**
+   * Optional resource type associated with resource.
+   */
+  resourceRider?: string,
+
+  /**
+   * True to use a slash (/) to separate the resourceId and resourceRider; False or omitted to use colon (:).
+   */
+  useSlashSeparator?: boolean,
+}
 
 /**
  * Generate a properly formatted V1 ORID.
  *
- * @param {object} data The metadata object for all ORID parts.
- * @param {object} data.provider The provider for this ORID.
- * @param {object} [data.custom1] Optional provider specific field 1.
- * @param {object} [data.custom2] Optional provider specific field 2.
- * @param {object} [data.custom3] Optional provider specific field 3.
- * @param {object} data.service The service that the resource belongs to.
- * @param {object} data.resourceId The resource identified by this ORID.
- * @param {object} [data.resourceRider] Optional resource type associated with resource.
- * @param {boolean} [data.useSlashSeparator] True to use a slash (/) to separate the resourceId and resourceRider; False or omitted to use colon (:).
+ * @param data The metadata object for all ORID parts.
  */
-const generate = (data) => {
+export function generate(data: V1Orid): string {
   const mainFormat = 'orid:1:{provider}:{custom1}:{custom2}:{custom3}:{service}:{suffix}';
   const suffixFormat = '{resourceId}{separator}{resourceRider}';
 
@@ -42,7 +76,13 @@ const generate = (data) => {
   });
 };
 
-const isValid = (value) => {
+/**
+ * 
+ * @param value The item to validate if it is a V1 ORID or not.
+ * @returns True if a valid orid string was supplied, false otherwise.
+ */
+export function isValid(value: string): boolean {
+  // Leave the runtime type check in for those not using typescript.
   const quickCheck = typeof value === 'string' && value.startsWith('orid:1:');
   if (!quickCheck) return false;
 
@@ -51,24 +91,12 @@ const isValid = (value) => {
 };
 
 /**
- * @typedef {object} ORID
- * @param {object} data The metadata object for all ORID parts.
- * @param {object} data.provider The provider for this ORID.
- * @param {object} [data.custom1] Optional provider specific field 1.
- * @param {object} [data.custom2] Optional provider specific field 2.
- * @param {object} [data.custom3] Optional provider specific field 3.
- * @param {object} data.service The service that the resource belongs to.
- * @param {object} data.resourceId The resource identified by this ORID.
- * @param {object} [data.resourceRider] Optional resource type associated with resource.
- * @param {boolean} [data.useSlashSeparator] True to use a slash (/) to separate resourceId and resourceRider; False or omitted to use colon (:).
- */
-
-/**
  * Parses a properly formatted ORID into an object for easier consumption.
- * @param {string} orid The ORID to parse.
- * @returns {ORID}
+ * @param orid The ORID to parse.
+ * @returns A ORID object.
  */
-const parse = (orid) => {
+export function parse (orid: string): V1Orid {
+  // Leave the runtime type check in for those not using typescript.
   if (typeof orid !== 'string') throw TypeError('orid must be of type string');
 
   if (!orid.startsWith('orid:1:')) throw new Error('Provided string does not appear to be a orid');
@@ -109,10 +137,4 @@ const parse = (orid) => {
     resourceId,
     resourceRider,
   };
-};
-
-module.exports = {
-  generate,
-  isValid,
-  parse,
 };

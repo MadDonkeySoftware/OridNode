@@ -1,15 +1,24 @@
 {
   "name": "@maddonkeysoftware/orid-node",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A utility page to help produce and consume Open Resource IDs",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf ./dist",
     "start": "node ./src/index.js",
-    "test": "NODE_ENV=test mocha",
-    "test-cov": "NODE_ENV=test nyc mocha",
-    "test-watch": "NODE_ENV=test nodemon --exec mocha",
-    "test-watch-cov": "NODE_ENV=test nodemon --exec \"nyc mocha\"",
-    "lint": "eslint 'src/**'"
+    "test": "NODE_ENV=test jest",
+    "test-cov": "NODE_ENV=test jest --coverage",
+    "test-watch": "NODE_ENV=test jest --watch",
+    "test-watch-cov": "NODE_ENV=test jest --watch --coverage",
+    "lint": "eslint 'src/**'",
+    "pretty-check": "prettier -c ./src",
+    "pretty": "prettier -w ./src",
+    "format": "npm run pretty",
+    "prebuild": "npm run clean",
+    "prepublish:setup": "npm run clean && npm run build && node dist/setup-package.js && rimraf ./dist/setup-package.js ./dist/setup-package.d.ts",
+    "publish:setup": "echo 'ready to publish from dist folder!'"
   },
   "repository": {
     "type": "git",
@@ -30,15 +39,22 @@
     "string-template": "^1.0.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.2",
-    "lodash": "^4.17.19",
-    "mocha": "^7.1.2",
-    "nodemon": "^2.0.4",
-    "nyc": "^15.0.1",
-    "sinon": "^9.0.2",
-    "sinon-chai": "^3.5.0"
+    "@jest/reporters": "^28.1.3",
+    "@types/jest": "^28.1.5",
+    "@types/lodash": "^4.14.182",
+    "@types/string-template": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jest": "^26.5.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^28.1.3",
+    "lodash": "^4.17.21",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
   }
 }
